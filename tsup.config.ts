@@ -8,12 +8,16 @@ export default defineConfig({
   clean: false, // Don't clean dist folder before building
   format: ['esm'], // Ensure you're targeting CommonJS
   dts: false, // Skip DTS generation to avoid external import issues // Ensure you're targeting CommonJS
+  define: {
+    global: 'globalThis',
+  },
   external: [
     'dotenv', // Externalize dotenv to prevent bundling
     'node:fs', // Externalize fs to use Node.js built-in module
     'node:https',
     'node:path', // Externalize other built-ins if necessary
     'node:http',
+    'buffer', // Externalize buffer to prevent dynamic require issues
     '@elizaos/plugin-cli',
     '@elizaos/core',
     'zod',

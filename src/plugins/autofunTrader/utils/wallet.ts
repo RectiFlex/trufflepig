@@ -1,5 +1,6 @@
 import { logger, type IAgentRuntime, parseJSONObjectFromText } from '@elizaos/core';
 import { Connection, Keypair, VersionedTransaction, PublicKey } from '@solana/web3.js';
+import { Buffer } from 'buffer';
 import { decodeBase58 } from './utils';
 
 /**

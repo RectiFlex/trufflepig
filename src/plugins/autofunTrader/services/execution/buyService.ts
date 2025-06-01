@@ -9,7 +9,8 @@ import { TradeMemoryService } from '../tradeMemoryService';
 import { TokenValidationService } from '../validation/TokenValidationService';
 import { WalletService } from '../walletService';
 
-import { AnchorProvider, BN, Program } from '@coral-xyz/anchor';
+import anchorPkg from '@coral-xyz/anchor';
+const { AnchorProvider, BN: AnchorBN, Program } = anchorPkg;
 import {
   ComputeBudgetProgram,
   Connection,
@@ -17,6 +18,7 @@ import {
   Transaction,
   VersionedTransaction,
 } from '@solana/web3.js';
+import { Buffer } from 'buffer';
 import { executeTrade } from '../../../degenTrader/utils/wallet';
 import IDL from '../../idl/autofun.json';
 import { Autofun } from '../../types/autofun';
@@ -56,22 +58,22 @@ function calculateAmountOutBuy(
     platformBuyFee,
   });
 
-  const feeBasisPoints = new BN(convertToBasisPoints(platformBuyFee));
+  const feeBasisPoints = new AnchorBN(convertToBasisPoints(platformBuyFee));
   console.log('feeBasisPoints:', feeBasisPoints.toString());
 
-  const amountBN = new BN(amount);
+  const amountBN = new AnchorBN(amount);
   console.log('amountBN:', amountBN.toString());
 
-  const adjustedAmount = amountBN.mul(new BN(10000)).sub(feeBasisPoints).div(new BN(10000));
+  const adjustedAmount = amountBN.mul(new AnchorBN(10000)).sub(feeBasisPoints).div(new AnchorBN(10000));
   console.log('adjustedAmount:', adjustedAmount.toString());
 
-  const reserveTokenBN = new BN(reserveToken.toString());
+  const reserveTokenBN = new AnchorBN(reserveToken.toString());
   console.log('reserveTokenBN:', reserveTokenBN.toString());
 
   const numerator = (reserveTokenBN as any).mul(adjustedAmount);
   console.log('numerator:', numerator.toString());
 
-  const denominator = new BN(reserveLamport.toString()).add(adjustedAmount);
+  const denominator = new AnchorBN(reserveLamport.toString()).add(adjustedAmount);
   console.log('denominator:', denominator.toString());
 
   const out = numerator.div(denominator).toNumber();
@@ -96,14 +98,14 @@ export function calculateAmountOutSell(
   if (reserveToken < 0) throw new Error('reserveToken must be non-negative');
 
   const feeBasisPoints = convertToBasisPoints(platformSellFee);
-  const amountBN = new BN(amount);
+  const amountBN = new AnchorBN(amount);
 
   // Apply fee: adjusted_amount = amount * (10000 - fee_basis_points) / 10000
-  const adjustedAmount = amountBN.mul(new BN(10000 - feeBasisPoints)).div(new BN(10000));
+  const adjustedAmount = amountBN.mul(new AnchorBN(10000 - feeBasisPoints)).div(new AnchorBN(10000));
 
   // For selling tokens: amount_out = reserve_lamport * adjusted_amount / (reserve_token + adjusted_amount)
-  const numerator = new BN(reserveLamport.toString()).mul(adjustedAmount);
-  const denominator = new BN(reserveToken.toString()).add(adjustedAmount);
+  const numerator = new AnchorBN(reserveLamport.toString()).mul(adjustedAmount);
+  const denominator = new AnchorBN(reserveToken.toString()).add(adjustedAmount);
 
   if (denominator.isZero()) throw new Error('Division by zero');
 
@@ -114,7 +116,7 @@ const FEE_BASIS_POINTS = 10000;
 
 export const getSwapAmount = async (
   configAccount,
-  program: Program<any>,
+  program: any,
   amount: number,
   style: number,
   reserveToken: number,
@@ -177,7 +179,7 @@ export const swapIx = async (
   amount: number,
   style: number,
   slippageBps: number = 100,
-  program: Program<Autofun>,
+  program: any,
   reserveToken: number,
   reserveLamport: number,
   configAccount: ConfigAccount
@@ -199,13 +201,13 @@ export const swapIx = async (
   );
   const estimatedOutput = estimatedOutputResult.estimatedOutput;
   // Apply slippage to estimated output
-  const minOutput = new BN(Math.floor((estimatedOutput * (10000 - slippageBps)) / 10000));
+  const minOutput = new AnchorBN(Math.floor((estimatedOutput * (10000 - slippageBps)) / 10000));
 
   const deadline = Math.floor(Date.now() / 1000) + 120;
 
   // Apply the fee instruction to the transaction
   const tx = await program.methods
-    .swap(new BN(amount), style, minOutput, new BN(deadline))
+    .swap(new AnchorBN(amount), style, minOutput, new AnchorBN(deadline))
     .accounts({
       teamWallet: configAccount.teamWallet,
       user,

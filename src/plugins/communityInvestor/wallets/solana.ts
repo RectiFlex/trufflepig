@@ -2,9 +2,22 @@ import type { IAgentRuntime } from '@elizaos/core';
 import {
   Connection,
   Keypair,
-  type ParsedTransactionWithMeta,
+  LAMPORTS_PER_SOL,
+  PublicKey,
+  Transaction,
+  sendAndConfirmTransaction,
+  SystemProgram,
+  ComputeBudgetProgram,
   VersionedTransaction,
+  type ParsedTransactionWithMeta,
 } from '@solana/web3.js';
+import {
+  TOKEN_PROGRAM_ID,
+  getOrCreateAssociatedTokenAccount,
+  transfer,
+  getAccount,
+  getMint,
+} from '@solana/spl-token';
 import bs58 from 'bs58';
 import { JupiterClient } from '../clients';
 import { SOL_ADDRESS } from '../constants';
@@ -18,6 +31,7 @@ import type {
 import { WalletProvider } from '../wallet';
 import { JitoRegion, sendTxUsingJito } from './jitoBundle';
 import { logger } from '@elizaos/core';
+import { Buffer } from 'buffer';
 
 /**
  * Represents the result of a quote generated for a trade on the Jupiter protocol.

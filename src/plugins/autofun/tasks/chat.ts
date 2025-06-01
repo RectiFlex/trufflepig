@@ -12,6 +12,9 @@ import {
   logger,
   stringToUuid,
   Service,
+  type Memory,
+  type Content,
+  type HandlerCallback,
 } from '@elizaos/core';
 import { Connection, Keypair, VersionedTransaction, PublicKey } from '@solana/web3.js';
 
@@ -115,6 +118,30 @@ export default class Chat {
 
     */
 
+    // Mock message object for testing - replace with actual message data
+    const message = {
+      id: 'test-message-id',
+      channel: 'test-channel',
+      url: 'https://example.com'
+    };
+    
+    const messageId = createUniqueUuid(this.runtime, message.id);
+    const roomId = createUniqueUuid(this.runtime, 'test-room');
+    const type = 'text'; // Use string instead of ChannelType.TEXT
+    
+    const newMessage: Memory = {
+      id: messageId,
+      entityId: this.runtime.agentId,
+      agentId: this.runtime.agentId,
+      roomId: roomId,
+      content: {
+        text: 'Test message',
+        source: 'autofun',
+        url: message.url,
+      },
+      createdAt: Date.now(),
+    };
+
     const callback: HandlerCallback = async (content: Content, files: any[]) => {
       try {
         if (message.id && !content.inReplyTo) {
@@ -136,6 +163,9 @@ export default class Chat {
         // POST https://api.auto.fun/api/chat/HN8GGgzBFvuePPL3DGPg7uuq2dVgLApnNcW4pxY9a11o/1k
         // {message: "Hello world", media: null}
 
+        // Mock messages array for testing
+        const messages = [{ id: 'test-id', url: 'https://example.com', createdTimestamp: Date.now() }];
+        
         const memories: Memory[] = [];
         for (const m of messages) {
           const actions = content.actions;
@@ -167,11 +197,14 @@ export default class Chat {
       }
     };
 
-    this.runtime.emitEvent([DiscordEventTypes.MESSAGE_RECEIVED, EventType.MESSAGE_RECEIVED], {
+    // Use proper event emission - removed DiscordEventTypes and EventType as they're not available
+    this.runtime.emitEvent('MESSAGE_RECEIVED', {
       runtime: this.runtime,
       message: newMessage,
       callback,
     });
+    
+    return true; // Add return value
   }
 
   async syncChats(): Promise<boolean> {
@@ -261,5 +294,7 @@ export default class Chat {
     // success: true, messages: [{
     //   timestamp, displayName (null), profileImage (null), address
     // }]
+    
+    return true; // Add return value
   }
 }

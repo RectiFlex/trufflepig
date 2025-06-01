@@ -1,5 +1,6 @@
 import type { IAgentRuntime, Plugin } from '@elizaos/core';
 import { logger } from '@elizaos/core';
+import routes from './apis';
 
 import { autofunProvider } from './providers/autofun';
 
@@ -7,7 +8,7 @@ import { autofunProvider } from './providers/autofun';
 export const autofunPlugin: Plugin = {
   name: 'autofun',
   description: 'Autofun plugin',
-  routes: [],
+  routes,
   providers: [autofunProvider],
   tests: [
     {
@@ -25,6 +26,12 @@ export const autofunPlugin: Plugin = {
   // FIXME: make a service
   services: [],
   init: async (_, runtime: IAgentRuntime) => {
+    // Log plugin initialization
+    logger.info(`🔌 Initializing Autofun plugin with ${routes.length} routes`);
+    routes.forEach(route => {
+      logger.info(`  📍 Route: ${route.type} ${route.path} (public: ${route.public})`);
+    });
+
     // is plugin-degenTrader active
     let hasPluginTrader = true;
 
@@ -58,6 +65,8 @@ export const autofunPlugin: Plugin = {
         console.log('autofunStart done');
       });
     }
+
+    logger.info('✅ Autofun plugin initialization complete');
 
     /*
     await registerTasks(runtime);

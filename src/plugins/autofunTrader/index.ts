@@ -35,7 +35,7 @@ export const autofunTraderPlugin: Plugin = {
           return true;
         },
         execute: async (runtime, _options, task) => {
-          const tradeService = runtime.getService(ServiceTypes.AUTOFUN_TRADING);
+          const tradeService = runtime.getService(ServiceTypes.AUTOFUN_TRADING) as DegenTradingService;
           try {
             tradeService.buyService.generateSignal();
           } catch (error) {
@@ -70,11 +70,11 @@ export const autofunTraderPlugin: Plugin = {
           return true;
         },
         execute: async (runtime, _options, task) => {
-          const tradeService = runtime.getService(ServiceTypes.AUTOFUN_TRADING) as unknown; //  as ITradeService
+          const tradeService = runtime.getService(ServiceTypes.AUTOFUN_TRADING) as DegenTradingService;
           try {
             tradeService.sellService.generateSignal();
           } catch (error) {
-            logger.error('Failed to generate buy signal', error);
+            logger.error('Failed to generate sell signal', error);
             // Log the error but don't delete the task
           }
         },

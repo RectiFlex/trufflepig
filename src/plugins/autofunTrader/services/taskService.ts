@@ -84,7 +84,7 @@ export class TaskService extends TradeExecutionService {
         id: taskId as `${string}-${string}-${string}-${string}-${string}`,
         name: 'EXECUTE_SELL',
         description: `Execute sell for ${signal.tokenAddress}`,
-        tags: ['queue', 'repeat', ServiceTypes.DEGEN_TRADING],
+        tags: ['queue', 'repeat', ServiceTypes.AUTOFUN_TRADING],
         metadata: {
           signal,
           expectedReceiveAmount,

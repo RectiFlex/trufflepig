@@ -1,4 +1,4 @@
-import type { CacheOptions, IAgentRuntime } from '@elizaos/core';
+import type { IAgentRuntime } from '@elizaos/core';
 import BigNumber from 'bignumber.js';
 import * as dotenv from 'dotenv';
 import { BTC_ADDRESS, ETH_ADDRESS, SOL_ADDRESS } from './constants';
@@ -13,6 +13,7 @@ import type {
   WalletPortfolio,
   WalletPortfolioItem,
 } from './types';
+import { Cache, CacheAdapter } from '@elizaos/core';
 dotenv.config();
 
 /**

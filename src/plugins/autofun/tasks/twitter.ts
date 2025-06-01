@@ -4,7 +4,6 @@
 // store tweets as memories in db, no reason really to get twitter here
 
 import {
-  ChannelType,
   type IAgentRuntime,
   ServiceType,
   type UUID,
@@ -16,6 +15,7 @@ import {
 
 interface TwitterService extends Service {
   getClientKey(clientId: UUID, agentId: UUID): string;
+  getClient(agentId: UUID, clientId: UUID): any;
   clients: Map<string, any>;
 }
 
@@ -37,15 +37,14 @@ export default class Twitter {
       id: this.feedRoomId,
       name: 'Twitter Feed',
       source: 'twitter',
-      type: ChannelType.FEED,
     });
 
     // Get the Twitter service from runtime
-    let manager = this.runtime.getService(ServiceType.TWITTER) as TwitterService;
+    let manager = this.runtime.getService('twitter' as any) as TwitterService;
     while (!manager) {
       //console.log('Waiting for Twitter service...');
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      manager = this.runtime.getService(ServiceType.TWITTER) as TwitterService;
+      manager = this.runtime.getService('twitter' as any) as TwitterService;
     }
     console.log('degen-intel: Twitter manager acquired, starting sync');
 

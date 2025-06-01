@@ -1,4 +1,5 @@
 import type { IAgentRuntime, Memory, Provider, State } from '@elizaos/core';
+import type { IToken } from '../types';
 
 /**
  * Provider for CMC latest coins
@@ -21,12 +22,33 @@ import type { IAgentRuntime, Memory, Provider, State } from '@elizaos/core';
  * @returns {Object} Object containing data, values, and text related to actions
  */
 export const autofunProvider: Provider = {
-  name: 'AUTOFUN_INFORMATION',
-  description: "Autofun latest information about the cryptocurrencies on it's platform",
+  name: 'INTEL_AUTOFUN',
+  description: 'A list of autofun solana tokens from the onchain and off-chain data aggregators',
   dynamic: true,
   //position: -1,
   get: async (runtime: IAgentRuntime, message: Memory, state: State) => {
+    if (!runtime.getSetting('AUTOFUN_API_KEY')) {
+      return {
+        data: {},
+        values: {},
+        text: 'No AutoFun API key configured.',
+      };
+    }
+
     // Get all sentiments
+    const chains = ['solana', 'base'];
+
+    const solanaTokens: IToken[] = (await runtime.getCache<IToken[]>('tokens_solana')) || [];
+
+    const combinedTokens: IToken[] = [...solanaTokens];
+
+    if (!combinedTokens.length) {
+      return {
+        data: { tokens: [] },
+        values: {},
+        text: 'No tokens found.',
+      };
+    }
 
     const url =
       'https://api.auto.fun/api/tokens?limit=200&page=1&sortBy=createdAt&sortOrder=desc&hideImported=1';
@@ -151,6 +173,5 @@ export const autofunProvider: Provider = {
       values,
       text,
     };
-    return false;
   },
 };

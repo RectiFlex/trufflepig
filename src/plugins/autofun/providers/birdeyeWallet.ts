@@ -32,8 +32,8 @@ export const birdeyeTradePortfolioProvider: Provider = {
     // Get all sentiments
     const chains = ['solana', 'base'];
 
-    const portfolioData = (await runtime.getCache<Portfolio[]>('portfolio')) || [];
-    const portfolio = portfolioData?.data; // this is wrong
+    const portfolioData = (await runtime.getCache<Portfolio>('portfolio')) || { key: 'PORTFOLIO', data: null };
+    const portfolio = portfolioData.data; // Fixed: access data property from Portfolio object
     /*
     wallet: "3nMBmufBUBVnk28sTp3NsrSJsdVGTyLZYmsqpMFaUT9J",
     totalUsd: 87.17431256926011,
@@ -44,6 +44,15 @@ export const birdeyeTradePortfolioProvider: Provider = {
     // wallet history
     const trades = (await runtime.getCache<TransactionHistory[]>('transaction_history')) || [];
     console.log('intel:provider - got trades', trades.length);
+    
+    if (!portfolio) {
+      return {
+        data: { portfolio: null, trades: [] },
+        values: {},
+        text: 'No portfolio data available.',
+      };
+    }
+
     //console.log('intel:provider - trades', trades)
     /*
     if (!trades.length) {
@@ -165,6 +174,5 @@ export const birdeyeTradePortfolioProvider: Provider = {
       values,
       text,
     };
-    return false;
   },
 };

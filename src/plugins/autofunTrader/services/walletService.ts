@@ -1,5 +1,6 @@
 import { type IAgentRuntime, logger } from '@elizaos/core';
-import { Connection, Keypair, PublicKey, VersionedTransaction } from '@solana/web3.js';
+import { Connection, Keypair, PublicKey, VersionedTransaction, SystemProgram } from '@solana/web3.js';
+import { Buffer } from 'buffer';
 import { calculateDynamicSlippage } from '../utils/analyzeTrade';
 import bs58 from 'bs58';
 

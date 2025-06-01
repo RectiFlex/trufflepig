@@ -1,5 +1,5 @@
 import path from 'node:path';
-import { type IAgentRuntime, logger, settings } from '@elizaos/core';
+import { type IAgentRuntime, logger, Setting } from '@elizaos/core';
 import { toBN } from './bignumber';
 import type {
   CalculatedBuyAmounts,
@@ -104,7 +104,7 @@ export class SolanaTokenProvider {
           headers: {
             Accept: 'application/json',
             'x-chain': 'solana',
-            'X-API-KEY': settings.BIRDEYE_API_KEY || '',
+            'X-API-KEY': Setting.BIRDEYE_API_KEY || '',
             ...options.headers,
           },
         });
@@ -319,7 +319,7 @@ export class SolanaTokenProvider {
       method: 'GET',
       headers: {
         accept: 'application/json',
-        'X-API-KEY': settings.BIRDEYE_API_KEY || '',
+        'X-API-KEY': Setting.BIRDEYE_API_KEY || '',
       },
     };
 

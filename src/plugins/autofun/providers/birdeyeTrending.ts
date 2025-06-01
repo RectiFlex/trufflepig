@@ -23,78 +23,53 @@ import { logger } from '@sentry/browser';
  * @returns {Object} Object containing data, values, and text related to actions
  */
 export const birdeyeTrendingProvider: Provider = {
-  name: 'BIRDEYE_TRENDING_CRYPTOCURRENCY',
-  description: 'Birdeye trending cryptocurrencies',
+  name: 'INTEL_TRENDING',
+  description: 'A list of trending solana tokens from the onchain and off-chain data aggregators',
   dynamic: true,
   //position: -1,
   get: async (runtime: IAgentRuntime, message: Memory, state: State) => {
     console.log('intel:provider - get birdeye');
+
     // Get all sentiments
     const chains = ['solana', 'base'];
-    const tokens = (await runtime.getCache<IToken[]>('tokens_solana')) || [];
+
     //console.log('intel:provider - birdeye data', tokens)
-    if (!tokens.length) {
-      logger.warn('intel:provider - no birdeye token data found');
-      return false;
-    }
+    const solanaTokens: IToken[] = (await runtime.getCache<IToken[]>('tokens_solana')) || [];
+    const baseTokens: IToken[] = (await runtime.getCache<IToken[]>('tokens_base')) || [];
+
+    const combinedTokens: IToken[] = [...solanaTokens, ...baseTokens];
 
     //console.log('intel:provider - birdeye token data', tokens)
-    /*
-    name: "Bitcoin",
-    rank: 1,
-    chain: "L1",
-    price: 93768.60351119141,
-    symbol: "BTC",
-    address: "bitcoin",
-    logoURI: "https://s2.coinmarketcap.com/static/img/coins/128x128/1.png",
-    decimals: null,
-    provider: "coinmarketcap",
-    liquidity: null,
-    marketcap: 0,
-    last_updated: "2025-04-23T22:50:00.000Z",
-    volume24hUSD: 43588891208.92652,
-    price24hChangePercent: 1.17760374,
-*/
-
-    let latestTxt = '\nCurrent Birdeye Trending list:';
-    let idx = 1;
-    // maybe filter by active chains
-    const reduceTokens = tokens.map((t) => {
-      const obj = {
-        name: t.name,
-        rank: t.rank,
-        chain: t.chain,
-        priceUsd: t.price,
-        symbol: t.symbol,
-        address: t.address,
-        // skip logo, decimals
-        // liquidity/marketcap are optimal
-        // last_updated
-        volume24hUSD: t.volume24hUSD,
-        price24hChangePercent: t.price24hChangePercent,
+    if (!combinedTokens.length) {
+      return {
+        data: { tokens: [] },
+        values: {},
+        text: 'No trending tokens found.',
       };
-      // optional fields
-      if (t.liquidity !== null) obj.liquidity = t.liquidity;
-      if (t.marketcap !== 0) obj.marketcap = t.marketcap;
-      return obj;
-    });
-    /*
-    for (const t of tokens) {
-      if (!sentiment?.occuringTokens?.length) continue;
-      sentiments += `ENTRY ${idx}\nTIME: ${sentiment.timeslot}\nTOKEN ANALYSIS:\n`;
-      for (const token of sentiment.occuringTokens) {
-        sentiments += `${token.token} - Sentiment: ${token.sentiment}\n${token.reason}\n`;
-      }
-      latestTxt += '\n-------------------\n';
+    }
+
+    // get holders
+
+    let latestTxt = '\nCurrent trending list of all cryptocurrencies with latest market data:\n';
+    let idx = 1;
+    for (const t of combinedTokens) {
+      const rank = t.rank || idx;
+      const name = t.name || 'Unknown';
+      const symbol = t.symbol || '?';
+      const priceUsd = t.price?.toFixed(10) || '0';
+      const volume24hUSD = t.volume24hUSD?.toFixed(2) || '0';
+      const price24hChangePercent = t.price24hChangePercent?.toFixed(2) || '0';
+      const liquidity = t.liquidity?.toFixed(2) || '0';  // Use optional chaining
+      const marketcap = t.marketcap?.toFixed(2) || '0';  // Use optional chaining
+
+      latestTxt += `RANK ${rank}: ${name} (${symbol}) - Price: $${priceUsd}, Volume 24h: $${volume24hUSD}, Change 24h: ${price24hChangePercent}%, Liquidity: $${liquidity}, Market Cap: $${marketcap}\n`;
       idx++;
     }
-    */
-    latestTxt += '\n' + JSON.stringify(reduceTokens) + '\n';
 
     //console.log('intel:provider - cmc token text', latestTxt)
 
     const data = {
-      tokens,
+      tokens: combinedTokens,
     };
 
     const values = {};
@@ -107,6 +82,5 @@ export const birdeyeTrendingProvider: Provider = {
       values,
       text,
     };
-    return false;
   },
 };

@@ -17,7 +17,8 @@ import { WalletService } from '../walletService';
 import { DataService } from '../dataService';
 import { AnalyticsService } from '../analyticsService';
 
-import { BN, AnchorProvider, Program } from '@coral-xyz/anchor';
+import anchorPkg from '@coral-xyz/anchor';
+const { BN: AnchorBN, AnchorProvider, Program } = anchorPkg;
 import IDL from '../../idl/autofun.json';
 import { Autofun } from '../../types/autofun';
 import {
@@ -27,8 +28,23 @@ import {
   Transaction,
   VersionedTransaction,
 } from '@solana/web3.js';
+import { Buffer } from 'buffer';
 
 import { executeTrade } from '../../utils/wallet';
+
+interface ISellSignalOutput {
+  recommended_sell: string;
+  recommend_sell_address: string;
+  reason: string;
+  sell_amount: string | number;
+  slippage?: number;
+}
+
+interface ConfigAccount {
+  teamWallet: PublicKey;
+  platformSellFee: number;
+  platformBuyFee: number;
+}
 
 function convertToBasisPoints(feePercent: number): number {
   if (feePercent >= 1) {
@@ -52,22 +68,22 @@ function calculateAmountOutBuy(
     platformBuyFee,
   });
 
-  const feeBasisPoints = new BN(convertToBasisPoints(platformBuyFee));
+  const feeBasisPoints = new AnchorBN(convertToBasisPoints(platformBuyFee));
   console.log('feeBasisPoints:', feeBasisPoints.toString());
 
-  const amountBN = new BN(amount);
+  const amountBN = new AnchorBN(amount);
   console.log('amountBN:', amountBN.toString());
 
-  const adjustedAmount = amountBN.mul(new BN(10000)).sub(feeBasisPoints).div(new BN(10000));
+  const adjustedAmount = amountBN.mul(new AnchorBN(10000)).sub(feeBasisPoints).div(new AnchorBN(10000));
   console.log('adjustedAmount:', adjustedAmount.toString());
 
-  const reserveTokenBN = new BN(reserveToken.toString());
+  const reserveTokenBN = new AnchorBN(reserveToken.toString());
   console.log('reserveTokenBN:', reserveTokenBN.toString());
 
   const numerator = (reserveTokenBN as any).mul(adjustedAmount);
   console.log('numerator:', numerator.toString());
 
-  const denominator = new BN(reserveLamport.toString()).add(adjustedAmount);
+  const denominator = new AnchorBN(reserveLamport.toString()).add(adjustedAmount);
   console.log('denominator:', denominator.toString());
 
   const out = numerator.div(denominator).toNumber();
@@ -92,14 +108,14 @@ export function calculateAmountOutSell(
   if (reserveToken < 0) throw new Error('reserveToken must be non-negative');
 
   const feeBasisPoints = convertToBasisPoints(platformSellFee);
-  const amountBN = new BN(amount);
+  const amountBN = new AnchorBN(amount);
 
   // Apply fee: adjusted_amount = amount * (10000 - fee_basis_points) / 10000
-  const adjustedAmount = amountBN.mul(new BN(10000 - feeBasisPoints)).div(new BN(10000));
+  const adjustedAmount = amountBN.mul(new AnchorBN(10000 - feeBasisPoints)).div(new AnchorBN(10000));
 
   // For selling tokens: amount_out = reserve_lamport * adjusted_amount / (reserve_token + adjusted_amount)
-  const numerator = new BN(reserveLamport.toString()).mul(adjustedAmount);
-  const denominator = new BN(reserveToken.toString()).add(adjustedAmount);
+  const numerator = new AnchorBN(reserveLamport.toString()).mul(adjustedAmount);
+  const denominator = new AnchorBN(reserveToken.toString()).add(adjustedAmount);
 
   if (denominator.isZero()) throw new Error('Division by zero');
 
@@ -110,7 +126,7 @@ const FEE_BASIS_POINTS = 10000;
 
 export const getSwapAmount = async (
   configAccount,
-  program: Program<any>,
+  program: any,
   amount: number,
   style: number,
   reserveToken: number,
@@ -173,7 +189,7 @@ export const swapIx = async (
   amount: number,
   style: number,
   slippageBps: number = 100,
-  program: Program<Autofun>,
+  program: any,
   reserveToken: number,
   reserveLamport: number,
   configAccount: ConfigAccount
@@ -195,13 +211,13 @@ export const swapIx = async (
   );
   const estimatedOutput = estimatedOutputResult.estimatedOutput;
   // Apply slippage to estimated output
-  const minOutput = new BN(Math.floor((estimatedOutput * (10000 - slippageBps)) / 10000));
+  const minOutput = new AnchorBN(Math.floor((estimatedOutput * (10000 - slippageBps)) / 10000));
 
   const deadline = Math.floor(Date.now() / 1000) + 120;
 
   // Apply the fee instruction to the transaction
   const tx = await program.methods
-    .swap(new BN(amount), style, minOutput, new BN(deadline))
+    .swap(new AnchorBN(amount), style, minOutput, new AnchorBN(deadline))
     .accounts({
       teamWallet: configAccount.teamWallet,
       user,
@@ -356,7 +372,7 @@ export class SellService extends BaseTradeService {
 
     // get balance from plugin-solana
     const walletBalance = await this.walletService.getBalance();
-    prompt = prompt.replace('{{solana_balance}}', walletBalance);
+    prompt = prompt.replace('{{solana_balance}}', walletBalance.toString());
 
     // Get sell recommendation from model
     let responseContent: ISellSignalOutput | null = null;
@@ -403,27 +419,39 @@ export class SellService extends BaseTradeService {
     }
     console.log('sell-signal', responseContent);
     const params = responseContent;
+    
+    // Get wallet address
+    const wallet = await this.walletService.getWallet();
+    
     const signal: SellSignalMessage = {
       positionId: uuidv4() as UUID,
       tokenAddress: params.recommend_sell_address,
-      amount: params.sell_amount,
+      amount: String(params.sell_amount),
       entityId: 'default',
-      slippage: params.slippage || 100,
+      currentBalance: '0', // Will be updated below
+      walletAddress: wallet.publicKey.toString(),
+      isSimulation: false,
+      sellRecommenderId: 'autofun_trader',
+      reason: params.reason || 'Automated sell signal',
     };
+
+    const slippageValue = params.slippage || 100; // Store slippage separately
 
     const token = goodAfTokens.find((t) => t.id === params.recommend_sell_address);
     if (!token) {
-      logger.log(params.recommend_sell_address, 'not a auto.fun token');
+      logger.log(`Token ${params.recommend_sell_address} not a auto.fun token`);
       return false;
     }
     //console.log('token', token)
     console.log('is AF token');
 
     if (token.status === 'migrated' || token.status === 'locked') {
-      await this.updateExpectedOutAmount(signal);
+      await this.updateExpectedOutAmount(signal, slippageValue);
     }
 
     const tokenBalance = walletData.find((a) => a.mint === params.recommend_sell_address).balance;
+    signal.currentBalance = tokenBalance.balance; // Update current balance
+    
     /*
     console.log('getting balance');
 
@@ -457,11 +485,18 @@ export class SellService extends BaseTradeService {
       Number(sellAmount),
       true
     );
-    signal.amount = sellAmount;
+    signal.amount = sellAmount.toString(); // Convert BigNumber to string
 
     console.log('sellAmount', sellAmount, 'slippageBps', slippageBps);
 
-    let result = {};
+    let result: {
+      success?: boolean;
+      signature?: string;
+      error?: string;
+      receivedAmount?: string;
+      receivedValue?: string;
+    } = {};
+    
     if (token.status === 'migrated' || token.status === 'locked') {
       logger.debug('selling from LP (bonded)');
 
@@ -483,7 +518,7 @@ export class SellService extends BaseTradeService {
       */
     } else {
       logger.debug('selling from AutoFun (unbonded)');
-      await this.autofunSell(signal, slippageBps);
+      result = await this.autofunSell(signal, slippageBps);
     }
 
     if (result.success) {
@@ -493,7 +528,7 @@ export class SellService extends BaseTradeService {
         type: 'SELL',
         amount: sellAmount.toString(),
         price: token.currentPrice.toString(),
-        txHash: result.signature,
+        txHash: result.signature || '',
         metadata: {
           slippage: slippageBps,
           expectedAmount: signal.expectedOutAmount || '0',
@@ -515,7 +550,8 @@ export class SellService extends BaseTradeService {
   }
 
   private async updateExpectedOutAmount(
-    signal: SellSignalMessage & { expectedOutAmount?: string }
+    signal: SellSignalMessage & { expectedOutAmount?: string },
+    slippage: number = 100
   ): Promise<void> {
     if (!signal.amount) return;
 
@@ -525,7 +561,7 @@ export class SellService extends BaseTradeService {
           signal.tokenAddress
         }&outputMint=So11111111111111111111111111111111111111112&amount=${Math.round(
           Number(signal.amount) * 1e9
-        )}&slippageBps=${signal.slippage || 100}`
+        )}&slippageBps=${slippage}`
       );
 
       if (quoteResponse.ok) {
@@ -539,7 +575,13 @@ export class SellService extends BaseTradeService {
     }
   }
 
-  async autofunSell(signal, slippageBps) {
+  async autofunSell(signal: SellSignalMessage, slippageBps: number): Promise<{
+    success: boolean;
+    signature?: string;
+    error?: string;
+    receivedAmount?: string;
+    receivedValue?: string;
+  }> {
     const wallet = await this.walletService.getWallet();
     // for anchor
     const walletAdapter = {
@@ -617,8 +659,8 @@ export class SellService extends BaseTradeService {
       return {
         success: false,
         signature: '',
-        outAmount: 0,
-        swapUsdValue: 0,
+        receivedAmount: '0',
+        receivedValue: '0',
       };
     } else {
       logger.log('Sell transaction simulation successful.');
@@ -645,8 +687,8 @@ export class SellService extends BaseTradeService {
     return {
       success,
       signature,
-      outAmount: 0,
-      swapUsdValue: 0,
+      receivedAmount: '0',
+      receivedValue: '0',
     };
   }
 
@@ -727,7 +769,7 @@ export class SellService extends BaseTradeService {
             chain: 'solana',
             type: 'SELL',
             amount: sellAmount.toString(),
-            price: marketData.priceUsd.toString(),
+            price: marketData.price.toString(),
             txHash: result.signature,
             metadata: {
               slippage: slippageBps,

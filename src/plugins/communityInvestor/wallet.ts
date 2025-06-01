@@ -6,6 +6,7 @@ import {
   logger,
 } from '@elizaos/core';
 import { Connection, Keypair, PublicKey, type VersionedTransaction } from '@solana/web3.js';
+import { Buffer } from 'buffer';
 import BigNumber from 'bignumber.js';
 import bs58 from 'bs58';
 import { BirdeyeClient } from './clients';
