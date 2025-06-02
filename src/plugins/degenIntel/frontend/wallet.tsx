@@ -71,14 +71,25 @@ async function fetchRealWalletData(): Promise<WalletData> {
       
       // Try to fetch real wallet data from standalone server
       try {
-        const realWalletData = await fetchRealSolanaPortfolio();
-        debugInfo.error = '✅ Successfully connected to standalone server and fetched REAL wallet data from BirdEye API!';
+        const portfolioResponse = await fetch('http://localhost:3001/portfolio', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
         
-        return {
-          solana: realWalletData.solana,
-          ethereum: realWalletData.ethereum,
-          debugInfo
-        };
+        if (portfolioResponse.ok) {
+          const portfolioData = await portfolioResponse.json();
+          debugInfo.error = '✅ Successfully connected to standalone server and fetched REAL wallet data from BirdEye API!';
+          
+          return {
+            solana: portfolioData.solana,
+            ethereum: portfolioData.ethereum,
+            debugInfo
+          };
+        } else {
+          throw new Error(`Portfolio endpoint failed: ${portfolioResponse.status} ${portfolioResponse.statusText}`);
+        }
       } catch (error) {
         debugInfo.error = `🔧 Standalone server connected but API error: ${error}`;
       }

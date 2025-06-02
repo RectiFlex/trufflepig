@@ -1,0 +1,9 @@
+
+> @elizaos/spartan@1.0.0-beta.52 dev:frontend
+> vite dev --port 5173
+
+
+  VITE v6.3.5  ready in 63 ms
+
+  ➜  Local:   http://localhost:5173/degen-intel/
+  ➜  Network: use --host to expose

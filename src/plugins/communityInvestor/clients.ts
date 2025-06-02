@@ -13,7 +13,13 @@ import type {
   WalletPortfolio,
   WalletPortfolioItem,
 } from './types';
-import { Cache, CacheAdapter } from '@elizaos/core';
+// import { Cache, CacheAdapter } from '@elizaos/core';
+
+// Define cache options type locally since it's not exported from core
+type CacheOptions = {
+  expires?: string | number;
+};
+
 dotenv.config();
 
 /**

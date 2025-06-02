@@ -146,16 +146,19 @@ export async function manageAnalyzedTokens(
 
     // Update state
     if (runtime) {
-      await runtime.updateRecentMessageState({
-        ...state,
-        userId: runtime.agentId,
+      await runtime.createMemory({
+        entityId: runtime.agentId,
         agentId: runtime.agentId,
         roomId: runtime.agentId,
         content: {
-          ...state?.content,
+          text: `Token analysis history updated: ${history.length} tokens tracked`,
           [historyKey]: JSON.stringify(history),
         },
-      });
+        metadata: {
+          type: 'analysis_history',
+          historyKey,
+        },
+      }, 'token_analysis');
     }
 
     return history;

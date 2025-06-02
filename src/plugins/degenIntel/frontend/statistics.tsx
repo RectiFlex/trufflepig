@@ -17,20 +17,25 @@ export default function Statistics() {
             headers: {
               'Content-Type': 'application/json',
             },
+            mode: 'cors', // Explicitly allow CORS
           });
           
           if (response.ok) {
             const data = await response.json();
+            console.log(`✅ Statistics loaded from ${endpoint}:`, data);
             if (data && typeof data.chains !== 'undefined') {
               return data;
             }
+          } else {
+            console.log(`❌ Statistics endpoint ${endpoint} returned ${response.status}`);
           }
         } catch (error) {
-          console.log(`Statistics API ${endpoint} not available`);
+          console.log(`❌ Statistics API ${endpoint} not available:`, error);
         }
       }
 
       // Fallback to mock data if no backend available
+      console.log('🔄 Using fallback statistics data');
       return {
         tweets: 0,
         sentiment: 0,
@@ -38,7 +43,7 @@ export default function Statistics() {
         chains: 0
       };
     },
-    retry: 1,
+    retry: 2,
     refetchInterval: 30000,
   });
 
@@ -46,7 +51,9 @@ export default function Statistics() {
     <div className="py-4 w-full bg-muted">
       <div className="container flex items-center gap-4">
         {query?.isPending ? (
-          <div className="text-sm animate-pulse">Loading statistics...</div>
+          <div className="text-sm animate-pulse">🔄 Loading live statistics...</div>
+        ) : query?.isError ? (
+          <div className="text-sm text-yellow-600">⚠️ Statistics temporarily unavailable - retrying...</div>
         ) : (
           <div className="flex items-center gap-4 text-sm">
             <span>📚 Tweets {query?.data?.tweets || 0}</span>
@@ -56,6 +63,7 @@ export default function Statistics() {
             <span>💸 Tokens {query?.data?.tokens || 0}</span>
             <span className="text-muted">•</span>
             <span>⛓️ Chains {query?.data?.chains || 0}</span>
+            <span className="text-xs text-green-600 ml-2">✅ Live</span>
           </div>
         )}
       </div>

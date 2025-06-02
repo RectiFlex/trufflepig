@@ -1,6 +1,5 @@
 import { logger, type IAgentRuntime, parseJSONObjectFromText } from '@elizaos/core';
 import { Connection, Keypair, VersionedTransaction, PublicKey } from '@solana/web3.js';
-import { Buffer } from 'buffer';
 import { decodeBase58 } from './utils';
 
 /**
@@ -207,7 +206,13 @@ export async function executeTrade(
     }
 
     // Execute transaction
-    const transactionBuf = Buffer.from(swapData.swapTransaction, 'base64');
+    const base64Transaction = swapData.swapTransaction;
+    // Use atob for browser-compatible base64 to Uint8Array conversion
+    const binaryString = atob(base64Transaction);
+    const transactionBuf = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+      transactionBuf[i] = binaryString.charCodeAt(i);
+    }
     const tx = VersionedTransaction.deserialize(transactionBuf);
 
     // Get fresh blockhash with processed commitment for speed
@@ -354,8 +359,14 @@ async function executeRaydiumTrade(
     }
 
     // Execute transaction
-    const transactionBuf = Buffer.from(swapData.swapTransaction, 'base64');
-    const tx = VersionedTransaction.deserialize(transactionBuf);
+    const base64TransactionData = swapData.swapTransaction;
+    // Use atob for browser-compatible base64 to Uint8Array conversion
+    const binaryStringData = atob(base64TransactionData);
+    const transactionBuffer = new Uint8Array(binaryStringData.length);
+    for (let i = 0; i < binaryStringData.length; i++) {
+      transactionBuffer[i] = binaryStringData.charCodeAt(i);
+    }
+    const tx = VersionedTransaction.deserialize(transactionBuffer);
 
     // Get fresh blockhash with processed commitment for speed
     const latestBlockhash = await connection.getLatestBlockhash('processed');

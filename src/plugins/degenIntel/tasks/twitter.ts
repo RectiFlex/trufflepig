@@ -94,21 +94,21 @@ export default class Twitter {
     });
 
     // Get the Twitter service from runtime
-    let manager = this.runtime.getService(ServiceType.TWITTER) as TwitterService;
+    let manager = this.runtime.getService('twitter' as any) as TwitterService;
     while (!manager) {
       //console.log('Waiting for Twitter service...');
       await new Promise((resolve) => setTimeout(resolve, 1000));
-      manager = this.runtime.getService(ServiceType.TWITTER) as TwitterService;
+      manager = this.runtime.getService('twitter' as any) as TwitterService;
     }
     console.log('degen-intel: Twitter manager acquired, starting sync');
 
-    const client = manager.getClient(this.runtime.agentId, this.runtime.agentId);
+    const client = manager.getClientKey ? manager.getClientKey(this.runtime.agentId, this.runtime.agentId) : manager.clients?.get(this.runtime.agentId);
     // it's not client.client
     //console.log('client keys', Object.keys(client)) //[ "client", "post", "interaction", "service" ]
     //console.log('client.client keys', Object.keys(client.client)) // "lastCheckedTweetId", "temperature", "requestQueue", "callback", "runtime", "state", "twitterClient", "profile"
 
     // Get the Twitter client directly from the manager
-    let twitterClient = client.client.twitterClient;
+    let twitterClient = client?.twitterClient;
     if (!twitterClient) {
       logger.error('Twitter client not found');
       return false;

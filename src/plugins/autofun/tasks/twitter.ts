@@ -11,6 +11,7 @@ import {
   logger,
   stringToUuid,
   Service,
+  ChannelType,
 } from '@elizaos/core';
 
 interface TwitterService extends Service {
@@ -37,6 +38,7 @@ export default class Twitter {
       id: this.feedRoomId,
       name: 'Twitter Feed',
       source: 'twitter',
+      type: ChannelType.FEED,
     });
 
     // Get the Twitter service from runtime

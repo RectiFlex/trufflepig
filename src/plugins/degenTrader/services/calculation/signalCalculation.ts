@@ -108,7 +108,7 @@ export class SignalCalculationService extends BaseTradeService {
 
   private async getHighWaterMark(): Promise<number> {
     try {
-      const stored = await this.runtime.databaseAdapter.getValue('high_water_mark');
+      const stored = await this.runtime.getCache('high_water_mark');
       return stored ? Number(stored) : 0;
     } catch (error) {
       logger.error('Error getting high water mark:', error);
@@ -118,7 +118,7 @@ export class SignalCalculationService extends BaseTradeService {
 
   private async updateHighWaterMark(value: number): Promise<void> {
     try {
-      await this.runtime.databaseAdapter.setValue('high_water_mark', value.toString());
+      await this.runtime.setCache('high_water_mark', value.toString());
     } catch (error) {
       logger.error('Error updating high water mark:', error);
     }

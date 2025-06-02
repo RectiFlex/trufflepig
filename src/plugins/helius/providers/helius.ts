@@ -25,7 +25,7 @@ import WebSocket from 'ws';
 export class HeliusWebSocket {
   private ws: WebSocket | null = null;
   private subscriptions: Map<string, number> = new Map();
-  private pingInterval: NodeJS.Timer | null = null;
+  private pingInterval: NodeJS.Timeout | null = null;
 
   constructor(
     private apiKey: string,

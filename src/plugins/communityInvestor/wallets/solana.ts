@@ -31,7 +31,6 @@ import type {
 import { WalletProvider } from '../wallet';
 import { JitoRegion, sendTxUsingJito } from './jitoBundle';
 import { logger } from '@elizaos/core';
-import { Buffer } from 'buffer';
 
 /**
  * Represents the result of a quote generated for a trade on the Jupiter protocol.
@@ -68,8 +67,13 @@ export function loadPrivateKey(runtime: IAgentRuntime) {
     // eslint-disable-next-line
   } catch (_e) {
     try {
-      // If that fails, try base64
-      secretKey = Uint8Array.from(Buffer.from(privateKeyString, 'base64'));
+      // If that fails, try base64 using atob (browser-compatible)
+      const base64String = privateKeyString.replace(/-/g, '+').replace(/_/g, '/');
+      const binaryString = atob(base64String);
+      secretKey = new Uint8Array(binaryString.length);
+      for (let i = 0; i < binaryString.length; i++) {
+        secretKey[i] = binaryString.charCodeAt(i);
+      }
       // eslint-disable-next-line
     } catch (_e2) {
       throw new Error('Invalid private key format');
@@ -263,7 +267,13 @@ export class SolanaTrustWalletProvider implements TrustWalletProvider<JupiterQuo
     outputToken: string;
     swapData: any;
   }) {
-    const transactionBuf = Buffer.from(swapData.swapTransaction, 'base64');
+    const base64TransactionCommunity = swapData.swapTransaction;
+    // Use atob for browser-compatible base64 to Uint8Array conversion
+    const binaryStringCommunity = atob(base64TransactionCommunity);
+    const transactionBuf = new Uint8Array(binaryStringCommunity.length);
+    for (let i = 0; i < binaryStringCommunity.length; i++) {
+      transactionBuf[i] = binaryStringCommunity.charCodeAt(i);
+    }
     const transaction = VersionedTransaction.deserialize(transactionBuf);
 
     const keypair = loadPrivateKey(this.runtime);

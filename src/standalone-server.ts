@@ -5,14 +5,19 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import fs from 'fs';
 
 // Load environment variables
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 dotenv.config({ path: path.join(__dirname, '../.env') });
 
-// Disable SSL verification for all requests - this fixes the SSL certificate issue
-process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+// Optional SSL verification bypass for development/testing environments
+// Set DISABLE_SSL_VERIFICATION=true in .env to bypass SSL certificate verification
+if (process.env.DISABLE_SSL_VERIFICATION === 'true') {
+  console.warn('⚠️  SSL certificate verification disabled (development mode)');
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
+}
 
 /**
  * Standalone server for plugin routes that ElizaOS doesn't mount automatically
@@ -23,8 +28,21 @@ const app = express();
 const PORT = process.env.PLUGIN_SERVER_PORT || 3001;
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: ['http://localhost:3000', 'http://localhost:5173'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'Origin', 'X-Requested-With', 'Accept']
+}));
 app.use(express.json());
+
+// Add cache control headers to prevent browser caching during development
+app.use((req, res, next) => {
+  res.header('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.header('Pragma', 'no-cache');
+  res.header('Expires', '0');
+  next();
+});
 
 // Mock runtime object with environment variable access and cache functionality
 const mockRuntime = {
@@ -514,6 +532,64 @@ app.get('/anthropic-test', async (req: Request, res: Response) => {
       success: false, 
       error: error instanceof Error ? error.message : 'Unknown error' 
     });
+  }
+});
+
+// Frontend static file serving routes for DegenIntel dashboard
+app.get('/degen-intel', (req: Request, res: Response) => {
+  console.log('=== DEGEN INTEL DASHBOARD ROOT ROUTE HIT ===');
+  console.log('Request path:', req.path);
+  console.log('Request URL:', req.url);
+  const indexPath = path.resolve(process.cwd(), 'dist/index.html');
+  console.log('Serving index.html from:', indexPath);
+  console.log('File exists:', fs.existsSync(indexPath));
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    res.status(404).send('Frontend not built. Please run: npm run build');
+  }
+});
+
+app.get('/degen-intel/', (req: Request, res: Response) => {
+  console.log('=== DEGEN INTEL DASHBOARD ROUTE HIT ===');
+  console.log('Request path:', req.path);
+  console.log('Request URL:', req.url);
+  const indexPath = path.resolve(process.cwd(), 'dist/index.html');
+  console.log('Serving index.html from:', indexPath);
+  console.log('File exists:', fs.existsSync(indexPath));
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    res.status(404).send('Frontend not built. Please run: npm run build');
+  }
+});
+
+app.get('/degen-intel/*', (req: Request, res: Response) => {
+  const indexPath = path.resolve(process.cwd(), 'dist/index.html');
+  if (fs.existsSync(indexPath)) {
+    res.sendFile(indexPath);
+  } else {
+    res.status(404).send('Frontend not built. Please run: npm run build');
+  }
+});
+
+app.get('/degen-intel/assets/:filename', (req: Request, res: Response) => {
+  const filename = req.params.filename;
+  const filePath = path.resolve(process.cwd(), 'dist', 'assets', filename);
+  console.log('Asset request:', {
+    filename,
+    filePath,
+    exists: fs.existsSync(filePath)
+  });
+  if (fs.existsSync(filePath)) {
+    if (filename.endsWith('.js')) {
+      res.setHeader('Content-Type', 'application/javascript');
+    } else if (filename.endsWith('.css')) {
+      res.setHeader('Content-Type', 'text/css');
+    }
+    res.sendFile(filePath);
+  } else {
+    res.status(404).send('Asset not found');
   }
 });
 

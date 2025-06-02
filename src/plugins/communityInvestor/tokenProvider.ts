@@ -104,7 +104,7 @@ export class SolanaTokenProvider {
           headers: {
             Accept: 'application/json',
             'x-chain': 'solana',
-            'X-API-KEY': Setting.BIRDEYE_API_KEY || '',
+            'X-API-KEY': this.runtime.getSetting('BIRDEYE_API_KEY') || '',
             ...options.headers,
           },
         });
@@ -319,7 +319,7 @@ export class SolanaTokenProvider {
       method: 'GET',
       headers: {
         accept: 'application/json',
-        'X-API-KEY': Setting.BIRDEYE_API_KEY || '',
+        'X-API-KEY': this.runtime.getSetting('BIRDEYE_API_KEY') || '',
       },
     };
 
@@ -698,7 +698,7 @@ export class SolanaTokenProvider {
     const limit = 1000;
     let cursor;
     //HELIOUS_API_KEY needs to be added
-    const url = `https://mainnet.helius-rpc.com/?api-key=${settings.HELIUS_API_KEY || ''}`;
+    const url = `https://mainnet.helius-rpc.com/?api-key=${this.runtime.getSetting('HELIUS_API_KEY') || ''}`;
     logger.log({ url });
 
     try {

@@ -21,13 +21,13 @@ export default defineConfig({
   },
   server: {
     proxy: {
-      // Proxy API calls to the backend server on port 3001
+      // Proxy API calls to the main ElizaOS server on port 3000
       '/api': {
-        target: 'http://localhost:3001',
+        target: 'http://localhost:3000',
         changeOrigin: true,
         secure: false
       },
-      // Fallback for direct routes
+      // Direct routes to the standalone server on port 3001
       '/wallet': 'http://localhost:3001',
       '/trending': 'http://localhost:3001',
       '/tweets': 'http://localhost:3001',

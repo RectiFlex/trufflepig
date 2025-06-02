@@ -1,0 +1,172 @@
+
+> @elizaos/spartan@1.0.0-beta.52 dev:ssl-bypass
+> NODE_TLS_REJECT_UNAUTHORIZED=0 elizaos dev
+
+Identified as an ElizaOS project package
+Running in project mode
+Building project...
+[2025-06-02 11:32:24] INFO: [36mBuilding project...[39m
+$ vite build && tsup
+vite v6.3.5 building for production...
+transforming...
+✓ 1659 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                   0.49 kB │ gzip:   0.31 kB
+dist/assets/index-oQHxGY17.css   27.92 kB │ gzip:   5.60 kB
+dist/assets/index-DdyPxDgC.js   340.10 kB │ gzip: 105.46 kB
+✓ built in 939ms
+CLI Building entry: src/index.ts
+CLI Using tsconfig: tsconfig.build.json
+CLI tsup v8.4.0
+CLI Using tsup config: /Users/tedushko/trufflepig-1/tsup.config.ts
+CLI Target: esnext
+ESM Build start
+ESM dist/index.js     647.34 KB
+ESM dist/index.js.map 1.29 MB
+ESM ⚡️ Build success in 43ms
+[2025-06-02 11:32:25] INFO: [36mBuild completed successfully[39m
+Starting server...
+Found 153 TypeScript/JavaScript files in the watched directory
+Sample files: custom-server.ts, index.ts, init.ts...
+Dev mode is active! The server will restart when files change.
+Press Ctrl+C to exit
+✓ Watching for file changes in src
+
+[38;5;27m⠀⠀⠀⠀⠀⠀⠀⠀⢀⣐⣿⣿⢰⡀⠀⠀⠀[38;5;255m ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀[38;5;255m⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀[0m
+[38;5;27m⠀⠀⠀⠀⠀⢀⣴⠤⠾⠛⠛⣿⣶⣇⠀⠀⡆[38;5;255m ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀[38;5;255m⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀[0m
+[38;5;27m⢰⣋⡳⡄⠀⢨⣭⡀⠀⡤⠀⣀⣝⢿⣶⣿⡅[38;5;255m ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀[38;5;255m⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀[0m
+[38;5;27m⢸⣯⠀⣇⠀⣼⣿⣿⣆⢷⣴⣿⣿⡏⣛⡉⠀[38;5;255m ⢸⣿⣿⣿⣿⣿⣿⢸⣿⣿⠀⠀⠀⠀⠀⣿⣿⡇⣿⣿⣿⣿⣿⣿⣿⡇⠀⠀⠀⣾⣿⣿⣧⠀⠀⠀[38;5;255m⢸⠟⢀⣴⣿⣿⣿⣿⣦⡀⣠⣾⣿⣿⣿⣿⣦⡙⢿[0m
+[38;5;27m⠀⠙⢷⣮⢸⣿⣿⣿⣿⣷⣯⣟⣏⣼⣷⣅⠾[38;5;255m ⢸⣿⣇⣀⣀⣀⠀⢸⣿⣿⠀⠀⠀⠀⠀⣿⣿⡇⠀⠀⠀⣠⣿⣿⠟⠁⠀⠀⣼⣿⡟⣿⣿⣆⠀⠀[38;5;255m⠀⠀⣿⣿⠋⠀⠈⠻⣿⡇⣿⣿⣅⣀⣀⡛⠛⠃⠀[0m
+[38;5;27m⠀⠀⠀⠁⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠋⠀[38;5;255m ⢸⣿⡿⠿⠿⠿⠀⢸⣿⣿⠀⠀⠀⠀⠀⣿⣿⡇⠀⣠⣾⣿⠟⠁⠀⠀⠀⣰⣿⣿⣁⣸⣿⣿⡄⠀[38;5;255m⠀⠀⣿⣿ ⠀⠀ ⣿⣿⢈⣛⠿⠿⠿⣿⣷⡄⠀[0m
+[38;5;27m⠀⠀⠀⠀⠸⣿⣿⣿⣿⣿⣿⣿⣿⣉⡟⠀⠀[38;5;255m ⢸⣿⣧⣤⣤⣤⣤⢸⣿⣿⣦⣤⣤⣤⡄⣿⣿⡇⣾⣿⣿⣧⣤⣤⣤⡄⢰⣿⣿⠟⠛⠛⠻⣿⣿⡄[38;5;255m⢠⡀⠻⣿⣿⣦⣴⣿⣿⠇⢿⣿⣦⣤⣤⣿⣿⠇⣠[0m
+[38;5;27m⠀⠀⠀⠀⢰⡈⠛⠿⣿⣿⣿⣿⣿⠋⠀  [38;5;255m ⠘⠛⠛⠛⠛⠛⠛⠈⠛⠛⠛⠛⠛⠛⠃⠛⠛⠃⠛⠛⠛⠛⠛⠛⠛⠃⠛⠛⠃⠀⠀⠀⠀⠙⠛⠃[38;5;255m⠘⠛⠀⠈⠛⠛⠛⠛⠁⠀⠀⠙⠛⠛⠛⠛⠁⠚⠛[0m
+[38;5;27m⠀⠀⠀⠀⢸⣿⡦⠀⠀⠉⠛⠿⠃⠀⠀⠀ [38;5;255m ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀[38;5;255m⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀[0m
+
+[38;5;51mVersion: 1.0.2[0m
+BYPASS: Using postgres URL from environment variable
+[2025-06-02 11:32:26] WARN: [36mServer authentication is disabled. Set ELIZA_SERVER_AUTH_TOKEN environment variable to enable.[39m
+[2025-06-02 11:32:27] ERROR: [36mError importing module: Error: Dynamic require of "buffer" is not supported[39m
+[32mStartup successful!
+Go to the dashboard at [1mhttp://localhost:3000[22m[0m
+AgentServer is listening on port 3000
+[2025-06-02 11:32:27] INFO: [36mDocument processor starting with Contextual Knowledge DISABLED[39m
+[elizaos] Resolved .env file from: /Users/tedushko/trufflepig-1/.env
+[2025-06-02 11:32:27] INFO: [36mInitializing Knowledge Plugin...[39m
+[2025-06-02 11:32:27] INFO: [36mValidating model configuration for Knowledge plugin...[39m
+[2025-06-02 11:32:27] INFO: [36mContextual Knowledge is disabled. Using basic embedding-only configuration.[39m
+[2025-06-02 11:32:27] INFO: [36mRunning in Basic Embedding mode (CTX_KNOWLEDGE_ENABLED=false). TEXT_PROVIDER and TEXT_MODEL not required.[39m
+[2025-06-02 11:32:27] INFO: [36mUsing openai for embeddings with text-embedding-3-small.[39m
+[2025-06-02 11:32:27] INFO: [36mModel configuration validated successfully.[39m
+[2025-06-02 11:32:27] INFO: [36mKnowledge Plugin initialized for agent: b850bc30-45f8-0041-a00a-83df46d8555d[39m
+[2025-06-02 11:32:27] INFO: [36mKnowledge Plugin initialized. Frontend panel should be discoverable via its public route.[39m
+[2025-06-02 11:32:28] INFO: [36mStarting Knowledge service for agent: b850bc30-45f8-0041-a00a-83df46d8555d[39m
+[2025-06-02 11:32:28] INFO: [36mKnowledgeService initialized for agent b850bc30-45f8-0041-a00a-83df46d8555d with config:[39m
+    CTX_KNOWLEDGE_ENABLED: false
+    LOAD_DOCS_ON_STARTUP: false
+[2025-06-02 11:32:28] INFO: [36mKnowledgeService: No character knowledge to process for agent b850bc30-45f8-0041-a00a-83df46d8555d.[39m
+[2025-06-02 11:32:32] INFO: [36mLoading documents from: /Users/tedushko/trufflepig-1/docs[39m
+[2025-06-02 11:32:32] INFO: [36mFound 1 files to process[39m
+[2025-06-02 11:32:32] INFO: [36mDocument loading complete: 0 successful, 0 failed out of 1 total[39m
+[elizaos] Resolved .env file from: /Users/tedushko/trufflepig-1/.env
+[2025-06-02 11:33:28] WARN: [36mDiscord API Token not provided - Discord plugin is loaded but will not be functional[39m
+[2025-06-02 11:33:28] WARN: [36mTo enable Discord functionality, please provide DISCORD_API_TOKEN in your .eliza/.env file[39m
+[2025-06-02 11:33:29] WARN: [36mDiscord API Token not provided - Discord functionality will be unavailable[39m
+[32m[√] Agent Spartan started successfully![0m
+[2025-06-02 11:33:29] INFO: [36m[Discord] Registered send handler.[39m
+[2025-06-02 21:33:29.811 +1000] [32mINFO[39m: [36mRegistered send handler for source: discord[39m
+    agentName: "Spartan"
+[2025-06-02 11:33:33] ERROR: [36m[SocketIO] agentId and roomId are required[39m
+[elizaos] Resolved .env file from: /Users/tedushko/trufflepig-1/.env
+[2025-06-02 11:36:05] WARN: [36mDiscord API Token not provided - Discord plugin is loaded but will not be functional[39m
+[2025-06-02 11:36:05] WARN: [36mTo enable Discord functionality, please provide DISCORD_API_TOKEN in your .eliza/.env file[39m
+[2025-06-02 11:36:06] WARN: [36mDiscord API Token not provided - Discord functionality will be unavailable[39m
+[32m[√] Agent SpartanTrader started successfully![0m
+[2025-06-02 11:36:06] INFO: [36m[Discord] Registered send handler.[39m
+[2025-06-02 21:36:06.584 +1000] [32mINFO[39m: [36mRegistered send handler for source: discord[39m
+    agentName: "SpartanTrader"
+[2025-06-02 11:36:18] INFO: [36mStopping Discord service...[39m
+[2025-06-02 11:36:18] INFO: [36mDiscord service stopped.[39m
+[2025-06-02 11:36:31] ERROR: [36m[SocketIO] agentId and roomId are required[39m
+[2025-06-02 11:36:38] ERROR: [36m[SocketIO] No agents found in room 92ec016e-5d68-0073-b452-37339a16f19a[39m
+[2025-06-02 11:36:38] INFO: [36m[Bootstrap] Message received from 19d62f31-f118-0aa4-9655-1e82e350468d in room 92ec016e-5d68-0073-b452-37339a16f19a[39m
+[2025-06-02 11:36:38] WARN: [36m[getTracer] Service instrumentation not found in runtime.[39m
+shouldRespond is [33mtrue[39m
+shouldSkipShouldRespond [33mtrue[39m
+[2025-06-02 11:36:39] ERROR: [36mNo world found for room 92ec016e-5d68-0073-b452-37339a16f19a[39m
+[2025-06-02 11:36:39] ERROR: [36mError processing world data: Error: No world found for room 92ec016e-5d68-0073-b452-37339a16f19a[39m
+[2025-06-02 11:36:39] ERROR: [36mCritical error in settings provider: Error: Failed to process world information[39m
+[2025-06-02 11:36:43] ERROR: [36mNo world found for room 92ec016e-5d68-0073-b452-37339a16f19a[39m
+[2025-06-02 11:36:43] ERROR: [36mError processing world data: Error: No world found for room 92ec016e-5d68-0073-b452-37339a16f19a[39m
+[2025-06-02 11:36:43] ERROR: [36mCritical error in settings provider: Error: Failed to process world information[39m
+[2025-06-02 11:36:43] WARN: [36m[getTracer] Service instrumentation not found in runtime.[39m
+[2025-06-02 11:36:43] ERROR: [36mNo world found for room 92ec016e-5d68-0073-b452-37339a16f19a[39m
+[2025-06-02 11:36:43] ERROR: [36mError processing world data: Error: No world found for room 92ec016e-5d68-0073-b452-37339a16f19a[39m
+[2025-06-02 11:36:43] ERROR: [36mCritical error in settings provider: Error: Failed to process world information[39m
+[2025-06-02 11:36:43] ERROR: [36mNo world found for room 92ec016e-5d68-0073-b452-37339a16f19a[39m
+[2025-06-02 11:36:43] ERROR: [36mError processing world data: Error: No world found for room 92ec016e-5d68-0073-b452-37339a16f19a[39m
+[2025-06-02 11:36:43] ERROR: [36mCritical error in settings provider: Error: Failed to process world information[39m
+[2025-06-02 11:36:43] WARN: [36m[getTracer] Service instrumentation not found in runtime.[39m
+[2025-06-02 11:36:46] ERROR: [36m[SocketIO] No agents found in room 92ec016e-5d68-0073-b452-37339a16f19a[39m
+[2025-06-02 11:36:56] ERROR: [36m[DB] Transaction timeout reached for agent deletion: 479233fd-b0e7-0f50-9d88-d4c9ea5b0de0[39m
+[2025-06-02 11:38:31] ERROR: [36mAPI error: POST /agents[39m
+    message: "(TypeError) Cannot destructure property 'characterPath' of 'req.body' as it is undefined."
+    stack: [
+      "TypeError: Cannot destructure property 'characterPath' of 'req.body' as it is undefined.",
+      "at file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:109307:13",
+      "at Layer.handleRequest (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:24874:21)",
+      "at next (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:25011:17)",
+      "at Route.dispatch (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:24985:7)",
+      "at handle (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:25278:16)",
+      "at Layer.handleRequest (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:24874:21)",
+      "at file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:25202:19",
+      "at processParams (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:25349:16)",
+      "at next (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:25198:9)",
+      "at router.handle (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:25134:7)",
+      "at router (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:25078:16)",
+      "at Layer.handleRequest (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:24874:21)",
+      "at trimPrefix (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:25233:17)",
+      "at file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:25204:13",
+      "at processParams (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:25349:16)",
+      "at next (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:25198:9)",
+      "at jsonParser (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:19891:11)",
+      "at Layer.handleRequest (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:24874:21)",
+      "at trimPrefix (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:25233:17)",
+      "at file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:25204:13",
+      "at processParams (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:25349:16)",
+      "at next (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:25198:9)",
+      "at urlencodedParser (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:22490:11)",
+      "at Layer.handleRequest (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:24874:21)",
+      "at trimPrefix (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:25233:17)",
+      "at file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:25204:13",
+      "at processParams (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:25349:16)",
+      "at next (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:25198:9)",
+      "at jsonParser (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:19891:11)",
+      "at Layer.handleRequest (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:24874:21)",
+      "at trimPrefix (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:25233:17)",
+      "at file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:25204:13",
+      "at processParams (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:25349:16)",
+      "at next (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:25198:9)",
+      "at cors3 (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:22905:11)",
+      "at file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:22937:21",
+      "at originCallback (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:22928:19)",
+      "at file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:22932:17",
+      "at optionsCallback (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:22914:13)",
+      "at corsMiddleware (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:22918:11)",
+      "at Layer.handleRequest (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:24874:21)",
+      "at trimPrefix (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:25233:17)",
+      "at file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:25204:13",
+      "at processParams (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:25349:16)",
+      "at next (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:25198:9)",
+      "at router.handle (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:25134:7)",
+      "at router (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:25078:16)",
+      "at Layer.handleRequest (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:24874:21)",
+      "at trimPrefix (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:25233:17)",
+      "at file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:25204:13",
+      "at processParams (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:25349:16)",
+      "at next (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:25198:9)",
+      "at file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:112178:11",
+      "at Layer.handleRequest (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:24874:21)",
+      "at trimPrefix (file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:25233:17)",
+      "at file:///Users/tedushko/trufflepig-1/node_modules/@elizaos/cli/dist/chunk-URANH3OS.js:25204:13"
+    ]

@@ -41,9 +41,8 @@ export const autofunPlugin: Plugin = {
 
     // FIXME: only if plugin-degenTrader is active
     if (hasPluginTrader) {
-      // don't block init from finishing
-      new Promise<void>(async (resolve) => {
-        resolve();
+      // don't block init from finishing - run asynchronously
+      (async () => {
         console.log('autofunStartIn');
         let service = runtime.getService('TRADER_DATAPROVIDER') as any;
         // FIXME: maybe a max retry?
@@ -60,9 +59,11 @@ export const autofunPlugin: Plugin = {
           name: 'Autofun',
           trendingService: 'AUTOFUN',
         };
-        await service.registerDataProvder(me);
+        await service.registerDataProvider(me);
 
         console.log('autofunStart done');
+      })().catch(error => {
+        logger.error('Error in autofun trader service registration:', error);
       });
     }
 

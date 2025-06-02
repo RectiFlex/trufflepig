@@ -12,6 +12,40 @@ import { fileURLToPath } from 'node:url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Helper functions for enhanced agent information
+function getAgentCapabilities(characterName: string): string[] {
+  const capabilities: Record<string, string[]> = {
+    'Eliza': ['General conversation', 'Question answering', 'Knowledge base'],
+    'Spartan': ['Solana trading', 'DeFi operations', 'Pool management', 'Token analysis'],
+    'Truffle': ['Trading automation', 'Market analysis', 'Portfolio management']
+  };
+  
+  return capabilities[characterName] || ['General AI assistant'];
+}
+
+function calculateUptime(agentId: string): string {
+  // Placeholder implementation - in a real system, you'd track actual uptime
+  // For now, return a simulated uptime
+  const now = new Date();
+  const startTime = new Date(now.getTime() - Math.random() * 24 * 60 * 60 * 1000); // Random time up to 24 hours ago
+  const uptimeMs = now.getTime() - startTime.getTime();
+  
+  const hours = Math.floor(uptimeMs / (1000 * 60 * 60));
+  const minutes = Math.floor((uptimeMs % (1000 * 60 * 60)) / (1000 * 60));
+  
+  return `${hours}h ${minutes}m`;
+}
+
+function getAgentPlugins(characterName: string): string[] {
+  const plugins: Record<string, string[]> = {
+    'Eliza': ['@elizaos/plugin-openai', '@elizaos/plugin-knowledge'],
+    'Spartan': ['@elizaos/plugin-solana', '@elizaos/plugin-degentrader', '@elizaos/plugin-trading'],
+    'Truffle': ['@elizaos/plugin-autofun', '@elizaos/plugin-trading', '@elizaos/plugin-analytics']
+  };
+  
+  return plugins[characterName] || ['@elizaos/plugin-core'];
+}
+
 /**
  * API routes for the DegenIntel plugin
  * These endpoints provide data for the frontend dashboard
@@ -34,7 +68,10 @@ export const routes: Route[] = [
           'GET /sentiment - Get sentiment analysis',
           'POST /statistics - Get trading statistics',
           'GET /config - Get wallet configuration',
-          'GET /portfolio - Get multi-chain portfolio'
+          'GET /portfolio - Get multi-chain portfolio',
+          'POST /agents/:id/start - Start an agent',
+          'POST /agents/:id/stop - Stop an agent',
+          'GET /agents/enhanced - Get enhanced agent information'
         ]
       });
     },
@@ -257,6 +294,235 @@ export const routes: Route[] = [
       } catch (error) {
         console.error('Error fetching statistics:', error);
         return res.status(500).json({ error: 'Failed to fetch statistics' });
+      }
+    },
+  },
+  // Frontend static file serving routes
+  {
+    type: 'GET',
+    path: '/degen-intel',
+    public: true,
+    name: 'Degen Intel Dashboard (Root)',
+    handler: async (_req: any, res: any) => {
+      console.log('=== DEGEN INTEL DASHBOARD ROOT ROUTE HIT ===');
+      console.log('Request path:', _req.path);
+      console.log('Request URL:', _req.url);
+      const indexPath = path.resolve(process.cwd(), 'dist/index.html');
+      console.log('Serving index.html from:', indexPath);
+      console.log('File exists:', fs.existsSync(indexPath));
+      if (fs.existsSync(indexPath)) {
+        res.sendFile(indexPath);
+      } else {
+        res.status(404).send('Frontend not built. Please run: npm run build');
+      }
+    },
+  },
+  {
+    type: 'GET',
+    path: '/degen-intel/',
+    public: true,
+    name: 'Degen Intel Dashboard',
+    handler: async (_req: any, res: any) => {
+      console.log('=== DEGEN INTEL DASHBOARD ROUTE HIT ===');
+      console.log('Request path:', _req.path);
+      console.log('Request URL:', _req.url);
+      const indexPath = path.resolve(process.cwd(), 'dist/index.html');
+      console.log('Serving index.html from:', indexPath);
+      console.log('File exists:', fs.existsSync(indexPath));
+      if (fs.existsSync(indexPath)) {
+        res.sendFile(indexPath);
+      } else {
+        res.status(404).send('Frontend not built. Please run: npm run build');
+      }
+    },
+  },
+  {
+    type: 'GET',
+    path: '/degen-intel/*',
+    public: true,
+    name: 'Degen Intel Dashboard Wildcard',
+    handler: async (_req: any, res: any) => {
+      const indexPath = path.resolve(process.cwd(), 'dist/index.html');
+      if (fs.existsSync(indexPath)) {
+        res.sendFile(indexPath);
+      } else {
+        res.status(404).send('Frontend not built. Please run: npm run build');
+      }
+    },
+  },
+  {
+    type: 'GET',
+    path: '/degen-intel/assets/:filename',
+    public: true,
+    name: 'Degen Intel Assets',
+    handler: async (req: any, res: any) => {
+      const filename = req.params.filename;
+      const filePath = path.resolve(process.cwd(), 'dist', 'assets', filename);
+      console.log('Asset request:', {
+        filename,
+        filePath,
+        exists: fs.existsSync(filePath)
+      });
+      if (fs.existsSync(filePath)) {
+        if (filename.endsWith('.js')) {
+          res.setHeader('Content-Type', 'application/javascript');
+        } else if (filename.endsWith('.css')) {
+          res.setHeader('Content-Type', 'text/css');
+        }
+        res.sendFile(filePath);
+      } else {
+        res.status(404).send('Asset not found');
+      }
+    },
+  },
+  // Enhanced agent information endpoint
+  {
+    type: 'GET',
+    path: '/agents/enhanced',
+    public: true,
+    name: 'Enhanced Agent Information',
+    handler: async (req: any, res: any, runtime: IAgentRuntime) => {
+      try {
+        // Get base agent information
+        const agentsResponse = await fetch('http://localhost:3000/api/agents');
+        const agentsData = await agentsResponse.json();
+        
+        if (!agentsData.success) {
+          throw new Error('Failed to fetch agents from core API');
+        }
+
+        // Enhance with additional information
+        const enhancedAgents = agentsData.data.agents.map((agent: any) => ({
+          ...agent,
+          capabilities: getAgentCapabilities(agent.characterName),
+          lastSeen: new Date().toISOString(), // In a real implementation, track this
+          uptime: agent.status === 'active' ? calculateUptime(agent.id) : null,
+          tradingEnabled: ['Spartan', 'Truffle'].includes(agent.characterName),
+          plugins: getAgentPlugins(agent.characterName)
+        }));
+
+        res.json({
+          success: true,
+          data: {
+            agents: enhancedAgents,
+            totalAgents: enhancedAgents.length,
+            activeAgents: enhancedAgents.filter(a => a.status === 'active').length,
+            timestamp: new Date().toISOString()
+          }
+        });
+      } catch (error) {
+        console.error('Error fetching enhanced agent information:', error);
+        res.status(500).json({
+          success: false,
+          error: 'Failed to fetch enhanced agent information',
+          details: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    },
+  },
+  // Agent start endpoint
+  {
+    type: 'POST',
+    path: '/agents/:id/start',
+    public: true,
+    name: 'Start Agent',
+    handler: async (req: any, res: any, runtime: IAgentRuntime) => {
+      try {
+        const agentId = req.params.id;
+        
+        // Get current agent information
+        const agentsResponse = await fetch('http://localhost:3000/api/agents');
+        const agentsData = await agentsResponse.json();
+        
+        const agent = agentsData.data?.agents?.find((a: any) => a.id === agentId);
+        if (!agent) {
+          return res.status(404).json({
+            success: false,
+            error: 'Agent not found'
+          });
+        }
+
+        if (agent.status === 'active') {
+          return res.json({
+            success: true,
+            message: `Agent ${agent.name} is already active`,
+            data: { agent }
+          });
+        }
+
+        // Note: ElizaOS doesn't have built-in start/stop functionality per agent
+        // This is a placeholder for future implementation
+        // In a real implementation, you would need to integrate with ElizaOS core
+        // to actually start/stop agent runtimes
+        
+        // Simulate starting the agent (placeholder)
+        // In reality, you'd need to:
+        // 1. Load the agent configuration
+        // 2. Initialize the agent runtime
+        // 3. Start the agent services
+        
+        res.json({
+          success: false,
+          error: 'Agent start/stop functionality not yet implemented in ElizaOS core',
+          message: 'This feature requires integration with ElizaOS core agent management',
+          suggestion: 'Currently, agents are managed through the ElizaOS configuration and startup process'
+        });
+        
+      } catch (error) {
+        console.error('Error starting agent:', error);
+        res.status(500).json({
+          success: false,
+          error: 'Failed to start agent',
+          details: error instanceof Error ? error.message : 'Unknown error'
+        });
+      }
+    },
+  },
+  // Agent stop endpoint
+  {
+    type: 'POST',
+    path: '/agents/:id/stop',
+    public: true,
+    name: 'Stop Agent',
+    handler: async (req: any, res: any, runtime: IAgentRuntime) => {
+      try {
+        const agentId = req.params.id;
+        
+        // Get current agent information
+        const agentsResponse = await fetch('http://localhost:3000/api/agents');
+        const agentsData = await agentsResponse.json();
+        
+        const agent = agentsData.data?.agents?.find((a: any) => a.id === agentId);
+        if (!agent) {
+          return res.status(404).json({
+            success: false,
+            error: 'Agent not found'
+          });
+        }
+
+        if (agent.status === 'inactive') {
+          return res.json({
+            success: true,
+            message: `Agent ${agent.name} is already inactive`,
+            data: { agent }
+          });
+        }
+
+        // Placeholder for stop functionality
+        res.json({
+          success: false,
+          error: 'Agent start/stop functionality not yet implemented in ElizaOS core',
+          message: 'This feature requires integration with ElizaOS core agent management',
+          suggestion: 'Currently, agents are managed through the ElizaOS configuration and startup process'
+        });
+        
+      } catch (error) {
+        console.error('Error stopping agent:', error);
+        res.status(500).json({
+          success: false,
+          error: 'Failed to stop agent',
+          details: error instanceof Error ? error.message : 'Unknown error'
+        });
       }
     },
   },

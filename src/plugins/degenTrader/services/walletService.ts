@@ -1,6 +1,6 @@
 import { type IAgentRuntime, logger } from '@elizaos/core';
 import { Connection, Keypair, VersionedTransaction, PublicKey, SystemProgram } from '@solana/web3.js';
-import { Buffer } from 'buffer';
+// import { Buffer } from 'buffer';
 import { calculateDynamicSlippage } from '../utils/analyzeTrade';
 import bs58 from 'bs58';
 
@@ -218,7 +218,13 @@ export class WalletService {
           }
 
           // Execute transaction
-          const transactionBuf = Buffer.from(swapData.swapTransaction, 'base64');
+          const base64Transaction = swapData.swapTransaction;
+          // Use atob for browser-compatible base64 to Uint8Array conversion
+          const binaryString = atob(base64Transaction);
+          const transactionBuf = new Uint8Array(binaryString.length);
+          for (let i = 0; i < binaryString.length; i++) {
+            transactionBuf[i] = binaryString.charCodeAt(i);
+          }
           const tx = VersionedTransaction.deserialize(transactionBuf);
 
           // Get fresh blockhash with processed commitment for speed

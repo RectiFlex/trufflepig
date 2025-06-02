@@ -28,7 +28,6 @@ import {
   Transaction,
   VersionedTransaction,
 } from '@solana/web3.js';
-import { Buffer } from 'buffer';
 
 import { executeTrade } from '../../utils/wallet';
 
@@ -611,14 +610,14 @@ export class SellService extends BaseTradeService {
     const tokenAddress = signal.tokenAddress;
 
     const [bondingCurvePda] = PublicKey.findProgramAddressSync(
-      [Buffer.from('bonding_curve'), new PublicKey(tokenAddress).toBytes()],
+      [new TextEncoder().encode('bonding_curve'), new PublicKey(tokenAddress).toBytes()],
       program.programId
     );
 
     const curve = await program.account.bondingCurve.fetch(bondingCurvePda);
 
     const [configPda, _] = PublicKey.findProgramAddressSync(
-      [Buffer.from('config')],
+      [new TextEncoder().encode('config')],
       program.programId
     );
 

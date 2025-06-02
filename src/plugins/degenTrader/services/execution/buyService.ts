@@ -145,7 +145,7 @@ export class BuyService extends BaseTradeService {
           chain: 'solana',
           type: 'BUY',
           amount: buyAmount.toString(),
-          price: marketData.priceUsd.toString(),
+          price: marketData.price.toString(),
           txHash: result.signature,
           metadata: {
             slippage: slippageBps,

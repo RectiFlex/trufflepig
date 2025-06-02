@@ -6,7 +6,6 @@ import {
   logger,
 } from '@elizaos/core';
 import { Connection, Keypair, PublicKey, type VersionedTransaction } from '@solana/web3.js';
-import { Buffer } from 'buffer';
 import BigNumber from 'bignumber.js';
 import bs58 from 'bs58';
 import { BirdeyeClient } from './clients';
@@ -58,9 +57,14 @@ export async function getWalletKey(
     } catch (e) {
       logger.log('Error decoding base58 private key:', e);
       try {
-        // Then try base64
+        // Then try base64 using atob (browser-compatible)
         logger.log('Try decoding base64 instead');
-        const secretKey = Uint8Array.from(Buffer.from(privateKeyString, 'base64'));
+        const base64String = privateKeyString.replace(/-/g, '+').replace(/_/g, '/');
+        const binaryString = atob(base64String);
+        const secretKey = new Uint8Array(binaryString.length);
+        for (let i = 0; i < binaryString.length; i++) {
+          secretKey[i] = binaryString.charCodeAt(i);
+        }
         return { keypair: Keypair.fromSecretKey(secretKey) };
       } catch (e2) {
         logger.error('Error decoding private key: ', e2);

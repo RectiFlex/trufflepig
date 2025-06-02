@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { createRoot } from 'react-dom/client';
+import Chat from './chat';
 import ImagePrompt from './image-prompt';
 import Sentiment from './sentiment';
 import Statistics from './statistics';
@@ -20,14 +21,18 @@ function App() {
         </div>
         <Statistics />
         <div className="container flex flex-col gap-4">
-          <Tabs defaultValue="sentiment">
+          <Tabs defaultValue="chat">
             <TabsList>
+              <TabsTrigger value="chat">💬 Trade Chat</TabsTrigger>
               <TabsTrigger value="sentiment">🌍 Sentiment</TabsTrigger>
               <TabsTrigger value="trending">💸 Trending</TabsTrigger>
               <TabsTrigger value="tweets">📚 Tweets</TabsTrigger>
               <TabsTrigger value="wallet">🏦 Wallet</TabsTrigger>
               <TabsTrigger value="image-prompt">🖼️ LORA Prompt</TabsTrigger>
             </TabsList>
+            <TabsContent value="chat">
+              <Chat />
+            </TabsContent>
             <TabsContent value="sentiment">
               <Sentiment />
             </TabsContent>
